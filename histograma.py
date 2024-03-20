@@ -3,9 +3,8 @@ from matplotlib import pyplot as plt
 import sys
 import os
 
-def histogram(dir_name, method_num, conf_mat):
+def histogram(files, dir_name, method_num, conf_mat):
 
-	files = [entry for entry in os.listdir(dir_name) if os.path.isfile(os.path.join(dir_name, entry))]
 	num_files = len(list(files))
 	if (num_files != 25):
 		print("[nome_diretório] deve conter exatos 25 arquivos")
@@ -41,33 +40,44 @@ def histogram(dir_name, method_num, conf_mat):
 						sc.append(float("inf"))
 					elif (method_num == 5):
 						sc.append(float("inf"))
-			conf_mat.append(sc)	
+			conf_mat.append(sc)
+
+def accuracy(files, conf_mat, ac):
+
+	for i in len(files):
+		similar = []
+		for j in len(files):
+			if (i != j) and (conf_mat[i][j] >= 0.91):
+				similar.append(files[j])
+
 
 def main():
 
 	if (len(sys.argv) == 3):
-		match sys.argv[1]:
-			case "1":
-				print("Método escolhido: Distância Euclidiana")
-			case "2":
-				print("Método escolhido: Correlação")
-			case "3":
-				print("Método escolhido: Chi-Square")
-			case "4":
-				print("Método escolhido: Intersection")
-			case "5":
-				print("Método escolhido: Bhattacharyya")
-			case _:
-				print("[num_método] deve ser um número de 1 a 5")
+		if (sys.argv[1] == "1"):
+			print("Método escolhido: Distância Euclidiana")
+		elif (sys.argv[1] == "2"):
+			print("Método escolhido: Correlação")
+		elif (sys.argv[1] == "3"):
+			print("Método escolhido: Chi-Square")
+		elif (sys.argv[1] == "4"):
+			print("Método escolhido: Intersection")
+		elif (sys.argv[1] == "5"):
+			print("Método escolhido: Bhattacharyya")
+		else:
+			print("[num_método] deve ser um número de 1 a 5")
 		n = int(sys.argv[1])
+		files = [entry for entry in os.listdir(sys.argv[2]) if os.path.isfile(os.path.join(sys.argv[2], entry))]
 		if (n >= 1) and (n <= 5):
 			conf_mat = []
-			histogram(sys.argv[2], n, conf_mat)
-		print("Matriz de confusão:")
-		for i in range(25):
-			for j in range(25):
-				print(conf_mat[i][j])
-			print()
+			histogram(files, sys.argv[2], n, conf_mat)
+			print("Matriz de confusão:")
+			for i in range(25):
+				for j in range(25):
+					print(conf_mat[i][j])
+				print()
+			ac = []
+			accuracy(files, conf_mat)
 	else:
 		print("Forma de uso: python3 histograma.py [num_método] [nome_diretório]")
 
